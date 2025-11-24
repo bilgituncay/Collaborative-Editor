@@ -1,0 +1,45 @@
+{% extends 'editor/base.html' %}
+{% block title %}Create Document{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/create_document.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>Create New Document</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="title">Document Title</label>
+                <input type="text" id="title" name="title" placeholder="Untitled Document" required>
+            </div>
+
+            <div class="form-group">
+            <label for="language">Programming Language</label>
+                <select id="language" name="language">
+                    <option value="python">Python</option>
+                    <option value="javascript">Javascript</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="go">Go</option>
+                    <option value="rust">Rust</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="php">PHP</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Create Document</button>
+                <a href="{% url 'document_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

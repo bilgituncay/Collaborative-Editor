@@ -1,0 +1,36 @@
+{% extends 'editor/base.html' %}
+
+{% block title %}My Documents{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/document_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h2>My Documents</h2>
+        <a href="{% url 'create_document' %}" class="btn-primary">+ New Document</a>      
+    </div>
+    {% if documents %}
+    <div class="document_grid">
+        {% for doc in documents %}
+        <a href="{% url 'editor' doc.id %}" class="document-card">
+            <h3>{{ doc.title }}</h3>
+            <span class="language-badge">{{ doc.language }}</span>
+            <div class="meta">
+                <span>Updated {{ doc.updated_at|timesince }} ago</span>
+                <span>Created {{ doc.created_at|date:"d.m.Y" }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No documents yet</h3>
+        <p>Create your first collaborative document to get started.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

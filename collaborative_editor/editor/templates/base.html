@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Collaborative Code Editor{% endblock %}</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        {% block extra_css %}{% endblock %}
+    </head>
+    <body>
+        <nav class="navbar">
+            <h1>Collaborative Code Editor</h1>
+            <div>
+                {% if user.is_authenticated %}
+                <span style="margin-right: 16px;">{{ user.username }}</span>
+                <a href="{% url 'document_list' %}">My Documents</a>
+                {% else %}
+                <a href="/admin/">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        {% block content %}{% endblock %}
+
+        {% block extra_js %}{% endblock %}
+    </body>
+</html>
