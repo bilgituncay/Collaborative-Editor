@@ -1,0 +1,37 @@
+{% extends 'editor/base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/create_document.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <p style="color: #f85149; margin-bottom: 16px;">Invalid username or password.</p>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="password" name="username" required autofocus>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+
+        <p style="margin-top: 20px; text-align: center; color: #8b8b8b;">
+            Use Django admin to create an account.
+        </p>
+    </div>
+</div>
+{% endblock %}

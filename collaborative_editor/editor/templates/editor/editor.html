@@ -1,147 +1,4 @@
 {% extends 'editor/base.html' %}
-{% block title %}{{ document.title }} {% endblock %}
-
-{% block extra_css %}
-{% load static %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
-<link rel="stylesheet" href="{% static 'css/editor.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="editor-header">
-    <div class="document-title">{{ document.title }}</div>
-    <div class="users-container">
-        <div id="usersList"></div>
-        <div class="connection-status" id="connectionStatus">Connecting...</div>
-    </div>
-</div>
-
-<div class="editor-container">
-    <textarea id="codeEditor"></textarea>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<!-- templates/editor/base.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Collaborative Code Editor{% endblock %}</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    {% block extra_css %}{% endblock %}
-</head>
-<body>
-    <nav class="navbar">
-        <h1>Collaborative Code Editor</h1>
-        <div>
-            {% if user.is_authenticated %}
-                <span style="margin-right: 16px;">{{ user.username }}</span>
-                <a href="{% url 'document_list' %}">My Documents</a>
-            {% else %}
-                <a href="/admin/">Login</a>
-            {% endif %}
-        </div>
-    </nav>
-    
-    {% block content %}{% endblock %}
-    
-    {% block extra_js %}{% endblock %}
-</body>
-</html>
-
-<!-- templates/editor/document_list.html -->
-{% extends 'editor/base.html' %}
-
-{% block title %}My Documents{% endblock %}
-
-{% block extra_css %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/document_list.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="container">
-    <div class="header">
-        <h2>My Documents</h2>
-        <a href="{% url 'create_document' %}" class="btn-primary">+ New Document</a>
-    </div>
-    
-    {% if documents %}
-        <div class="document-grid">
-            {% for doc in documents %}
-                <a href="{% url 'editor' doc.id %}" class="document-card">
-                    <h3>{{ doc.title }}</h3>
-                    <span class="language-badge">{{ doc.language }}</span>
-                    <div class="meta">
-                        <span>Updated {{ doc.updated_at|timesince }} ago</span>
-                        <span>Created {{ doc.created_at|date:"M d, Y" }}</span>
-                    </div>
-                </a>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-state">
-            <h3>No documents yet</h3>
-            <p>Create your first collaborative document to get started</p>
-        </div>
-    {% endif %}
-</div>
-{% endblock %}
-
-<!-- templates/editor/create_document.html -->
-{% extends 'editor/base.html' %}
-
-{% block title %}Create Document{% endblock %}
-
-{% block extra_css %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/create_document.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="container">
-    <div class="form-container">
-        <h2>Create New Document</h2>
-        
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="title">Document Title</label>
-                <input type="text" id="title" name="title" placeholder="Untitled Document" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="language">Programming Language</label>
-                <select id="language" name="language">
-                    <option value="python">Python</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="java">Java</option>
-                    <option value="cpp">C++</option>
-                    <option value="go">Go</option>
-                    <option value="rust">Rust</option>
-                    <option value="ruby">Ruby</option>
-                    <option value="php">PHP</option>
-                    <option value="html">HTML</option>
-                    <option value="css">CSS</option>
-                </select>
-            </div>
-            
-            <div class="btn-group">
-                <button type="submit" class="btn btn-primary">Create Document</button>
-                <a href="{% url 'document_list' %}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div>
-</div>
-{% endblock %}
-
-<!-- templates/editor/editor.html -->
-{% extends 'editor/base.html' %}
 
 {% block title %}{{ document.title }}{% endblock %}
 
@@ -177,10 +34,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+
 <script>
     const documentId = '{{ document_id }}';
     const documentLanguage = '{{ document.language }}';
-
+    
     // Initialize CodeMirror
     const editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
         mode: documentLanguage,
@@ -202,33 +60,34 @@
     let isLocalChange = false;
     let connectedUsers = new Map();
     let remoteCursors = new Map();
-
+    
     const userColors = [
         '#3b82f6', '#ef4444', '#10b981', '#f59e0b', 
         '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'
     ];
 
     // WebSocket connection
-    function connect(){
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws';
+    function connect() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws/editor/${documentId}/`;
-
+        
         socket = new WebSocket(wsUrl);
+        
         socket.onopen = () => {
             updateConnectionStatus(true);
             console.log('WebSocket connected');
         };
-
+        
         socket.onclose = () => {
             updateConnectionStatus(false);
             console.log('WebSocket disconnected');
             setTimeout(connect, 3000);
         };
-
+        
         socket.onerror = (error) => {
-            console.error('Websocket error:', error);
+            console.error('WebSocket error:', error);
         };
-
+        
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             handleMessage(data);
@@ -243,22 +102,22 @@
                 editor.setValue(data.content);
                 isLocalChange = false;
                 break;
-
+                
             case 'text_change':
-                if (data.user_id !== userId){
+                if (data.user_id !== userId) {
                     applyRemoteChange(data);
                 }
                 break;
-            
+                
             case 'cursor_position':
                 updateRemoteCursor(data.user_id, data.position, data.selection);
                 break;
-
+                
             case 'user_joined':
                 addUser(data.user_id);
                 break;
-
-            case'user_left':
+                
+            case 'user_left':
                 removeUser(data.user_id);
                 break;
         }
@@ -267,50 +126,48 @@
     function applyRemoteChange(data) {
         isLocalChange = true;
         const doc = editor.getDoc();
-
+        
         switch(data.operation) {
             case 'insert':
                 const pos = doc.posFromIndex(data.position);
                 doc.replaceRange(data.text, pos);
                 break;
-
+                
             case 'delete':
                 const from = doc.posFromIndex(data.position);
                 const to = doc.posFromIndex(data.position + data.length);
                 doc.replaceRange('', from, to);
                 break;
-
+                
             case 'replace':
                 editor.setValue(data.content);
                 break;
         }
-
+        
         isLocalChange = false;
     }
 
     editor.on('change', (instance, changeObj) => {
         if (isLocalChange || !socket || socket.readyState !== WebSocket.OPEN) return;
-
+        
         const doc = instance.getDoc();
         const from = doc.indexFromPos(changeObj.from);
         const content = instance.getValue();
-
+        
         let operation, text, length;
-
+        
         if (changeObj.origin === '+input' || changeObj.origin === 'paste') {
             operation = 'insert';
             text = changeObj.text.join('\n');
-        }
-        else if (changeObj.origin === '+delete' || changeObj.origin === 'cut') {
+        } else if (changeObj.origin === '+delete' || changeObj.origin === 'cut') {
             operation = 'delete';
             text = '';
             length = changeObj.removed.join('\n').length;
-        }
-        else {
+        } else {
             operation = 'replace';
             text = changeObj.text.join('\n');
         }
-
+        
         socket.send(JSON.stringify({
             type: 'text_change',
             operation: operation,
@@ -322,19 +179,19 @@
     });
 
     editor.on('cursorActivity', () => {
-        if ((!socket || socket.readyState !== WebSocket.OPEN)) return;
-
+        if (!socket || socket.readyState !== WebSocket.OPEN) return;
+        
         const doc = editor.getDoc();
         const cursor = doc.getCursor();
-        const positipoon = doc.indexFromPos(cursor);
-
+        const position = doc.indexFromPos(cursor);
+        
         let selection = null;
         if (doc.somethingSelected()) {
             const from = doc.indexFromPos(doc.getCursor('from'));
             const to = doc.indexFromPos(doc.getCursor('to'));
             selection = { from, to };
         }
-
+        
         socket.send(JSON.stringify({
             type: 'cursor_position',
             position: position,
@@ -360,7 +217,7 @@
     function updateUsersList() {
         const usersList = document.getElementById('usersList');
         usersList.innerHTML = '';
-
+        
         connectedUsers.forEach((user, uid) => {
             const badge = document.createElement('div');
             badge.className = 'user-badge';
@@ -375,7 +232,7 @@
         const doc = editor.getDoc();
         const pos = doc.posFromIndex(position);
         const coords = editor.cursorCoords(pos, 'local');
-
+        
         let cursorEl = remoteCursors.get(uid);
         if (!cursorEl) {
             cursorEl = document.createElement('div');
@@ -384,7 +241,7 @@
             editor.getWrapperElement().appendChild(cursorEl);
             remoteCursors.set(uid, cursorEl);
         }
-
+        
         const user = connectedUsers.get(uid);
         if (user) {
             cursorEl.style.background = user.color;
@@ -393,7 +250,7 @@
         }
     }
 
-    function removeRemoteCursor (uid) {
+    function removeRemoteCursor(uid) {
         const cursorEl = remoteCursors.get(uid);
         if (cursorEl) {
             cursorEl.remove();
@@ -404,7 +261,7 @@
     function updateConnectionStatus(connected) {
         const status = document.getElementById('connectionStatus');
         status.className = 'connection-status ' + (connected ? 'connected' : 'disconnected');
-        status.textContent = connected? 'Connected' : 'Disconnected';
+        status.textContent = connected ? 'Connected' : 'Disconnected';
     }
 
     connect();

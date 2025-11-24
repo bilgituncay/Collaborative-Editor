@@ -130,6 +130,15 @@ class EditorConsumer(AsyncWebsocketConsumer):
             }))
 
     @database_sync_to_async
+    def get_document_content(self):
+        try:
+            doc = Document.objects.get(id=self.document_id)
+            return doc.content
+        except Document.DoesNotExist:
+            return ""
+
+
+    @database_sync_to_async
     def save_document_content(self, content):
         try:
             doc = Document.objects.get(id=self.document_id)

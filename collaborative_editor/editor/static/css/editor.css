@@ -1,0 +1,96 @@
+body {
+    overflow: hidden;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.editor-header {
+    background: #252526;
+    padding: 12px 20px;
+    border-bottom: 1px solid #3c3c3c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.document-title {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.users-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.user-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.connection-status {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.connection-status.connected {
+    background: #0e4429;
+    color: #3fb950;
+}
+
+.connection-status.disconnected {
+    background: #5c1c1c;
+    color: #f85149;
+}
+
+.editor-container {
+    height: calc(100vh - 110px);
+    position: relative;
+}
+
+.CodeMirror {
+    height: 100%;
+    font-size: 14px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
+
+.remote-cursor {
+    position: absolute;
+    width: 2px;
+    height: 20px;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.remote-cursor::before {
+    content: attr(data-user);
+    position: absolute;
+    top: -18px;
+    left: 0;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    background: inherit;
+    color: white;
+}
