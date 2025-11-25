@@ -16,14 +16,20 @@
     {% if documents %}
     <div class="document_grid">
         {% for doc in documents %}
-        <a href="{% url 'editor' doc.id %}" class="document-card">
-            <h3>{{ doc.title }}</h3>
-            <span class="language-badge">{{ doc.language }}</span>
-            <div class="meta">
-                <span>Updated {{ doc.updated_at|timesince }} ago</span>
-                <span>Created {{ doc.created_at|date:"d.m.Y" }}</span>
+            <div class="document-card" style="position: relative;">
+            <a href="{% url 'editor' doc.id %}" style="text-decoration: none; color: inherit;">
+                <h3>{{ doc.title }}</h3>
+                <span class="language-badge">{{ doc.language }}</span>
+                <div class="meta">
+                    <span>Updated {{ doc.updated_at|timesince }} ago</span>
+                    <span>Created {{ doc.created_at|date:"d.m.Y" }}</span>
+                </div>
+            </a>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #3c3c3c; display: flex; gap: 8px;">
+                    <a href="{% url 'editor' doc.id %}" class="btn-primary" style="flex: 1; text-align: center; padding: 8px;">Open</a>
+                    <a href="{% url 'delete_document' doc.id %}" class="btn-secondary" style="padding: 8px 12px; background: #5c1c1c; color: #f85149; border: none;">Delete</a>
+                </div>
             </div>
-        </a>
         {% endfor %}
     </div>
     {% else %}

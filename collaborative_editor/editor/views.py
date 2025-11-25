@@ -1,8 +1,34 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout
+from django.contrib import messages
 from .models import Document
+from .forms import CustomUserCreationForm
 
 # Create your views here.
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('document_list')
+    
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'Welcome {user.username}. Your account has been created.')
+            return redirect('document_list')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'editor/register.html', {'form': form})
+
+def user_login(request):
+    pass
+
+def user_logout(request):
+    logout(request)
+    messages.info(request, 'You have been successfully logged out.')
+    return redirect('login')
 
 @login_required
 def document_list(request):
@@ -29,3 +55,19 @@ def editor(request, document_id):
         'document': document,
         'document_id': str(document.id)
     })
+
+@login_required
+def delete_document(request, document_id):
+    document = get_object_or_404(Document, id=document_id)
+
+    if document.created_by != request.user:
+        messages.error(request, 'You do not have permission to delete this document.')
+        return redirect(document_list)
+    
+    if request.method == 'POST':
+        title = document.title
+        document.delete()
+        messages.success(request, f'Document "{title}"deleted successfully.')
+        return redirect('document_list')
+    
+    return render(request, 'editor/delete_confirm.html', {'document': document})

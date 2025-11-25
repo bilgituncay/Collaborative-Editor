@@ -1,0 +1,36 @@
+{% extends 'editor/base.html' %}
+{% load static %}
+
+{% block title %}Delete Document{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/create_document.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>Delete Document</h2>
+        
+        <div class="warning-box">
+            <strong>⚠️ Warning:</strong> This action cannot be undone. The document and all its content will be permanently deleted.
+        </div>
+        
+        <div class="document-info">
+            <p><strong>Document:</strong> {{ document.title }}</p>
+            <p><strong>Language:</strong> {{ document.language }}</p>
+            <p><strong>Created:</strong> {{ document.created_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>Last Updated:</strong> {{ document.updated_at|date:"d.m.Y H:i" }}</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-danger">Yes, Delete Document</button>
+                <a href="{% url 'document_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

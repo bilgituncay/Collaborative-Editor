@@ -11,7 +11,7 @@
 <div class="container">
     <div class="form-container">
         <h2>Login</h2>
-
+        
         <form method="post">
             {% csrf_token %}
 
@@ -30,7 +30,7 @@
         </form>
 
         <p style="margin-top: 20px; text-align: center; color: #8b8b8b;">
-            Use Django admin to create an account.
+            Don't have an account? <a href="{% url 'register' %}" style="color: #3b82f6;">Register here</a>
         </p>
     </div>
 </div>
