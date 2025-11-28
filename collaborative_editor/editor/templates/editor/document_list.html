@@ -9,34 +9,93 @@
 
 {% block content %}
 <div class="container">
+    {% if messages %}
+        <div style="margin-bottom: 24px;">
+            {% for message in messages %}
+                <div style="background: {% if message.tags == 'error' %}#5c1c1c{% elif message.tags == 'success' %}#0e4429{% else %}#1e3a8a{% endif %}; 
+                            color: {% if message.tags == 'error' %}#f85149{% elif message.tags == 'success' %}#3fb950{% else %}#60a5fa{% endif %}; 
+                            padding: 12px 16px; border-radius: 6px; margin-bottom: 8px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
     <div class="header">
         <h2>My Documents</h2>
-        <a href="{% url 'create_document' %}" class="btn-primary">+ New Document</a>      
+        <a href="{% url 'create_document' %}" class="btn-primary">+ New Document</a>
     </div>
-    {% if documents %}
-    <div class="document_grid">
-        {% for doc in documents %}
-            <div class="document-card" style="position: relative;">
-            <a href="{% url 'editor' doc.id %}" style="text-decoration: none; color: inherit;">
-                <h3>{{ doc.title }}</h3>
-                <span class="language-badge">{{ doc.language }}</span>
-                <div class="meta">
-                    <span>Updated {{ doc.updated_at|timesince }} ago</span>
-                    <span>Created {{ doc.created_at|date:"d.m.Y" }}</span>
+    
+    {% if owned_documents %}
+        <div class="document-grid">
+            {% for doc in owned_documents %}
+                <div class="document-card" style="position: relative;">
+                    <a href="{% url 'editor' doc.id %}" style="text-decoration: none; color: inherit;">
+                        <h3>{{ doc.title }}</h3>
+                        <span class="language-badge">{{ doc.language }}</span>
+                        <div style="margin-top: 8px;">
+                            <span style="font-size: 12px; color: #8b8b8b;">
+                                {% with collab_count=doc.collaborators.count %}
+                                    {% if collab_count > 0 %}
+                                        👥 {{ collab_count }} collaborator{{ collab_count|pluralize }}
+                                    {% else %}
+                                        Private
+                                    {% endif %}
+                                {% endwith %}
+                            </span>
+                        </div>
+                        <div class="meta">
+                            <span>Updated {{ doc.updated_at|timesince }} ago</span>
+                            <span>Created {{ doc.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </a>
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #3c3c3c; display: flex; gap: 8px;">
+                        <a href="{% url 'editor' doc.id %}" class="btn-primary" style="flex: 1; text-align: center; padding: 8px;">Open</a>
+                        <a href="{% url 'manage_collaborators' doc.id %}" class="btn-secondary" style="padding: 8px 12px; border: 1px solid #3c3c3c;">👥</a>
+                        <a href="{% url 'delete_document' doc.id %}" class="btn-secondary" style="padding: 8px 12px; background: #5c1c1c; color: #f85149; border: none;">Delete</a>
+                    </div>
                 </div>
-            </a>
-                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #3c3c3c; display: flex; gap: 8px;">
-                    <a href="{% url 'editor' doc.id %}" class="btn-primary" style="flex: 1; text-align: center; padding: 8px;">Open</a>
-                    <a href="{% url 'delete_document' doc.id %}" class="btn-secondary" style="padding: 8px 12px; background: #5c1c1c; color: #f85149; border: none;">Delete</a>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
     {% else %}
-    <div class="empty-state">
-        <h3>No documents yet</h3>
-        <p>Create your first collaborative document to get started.</p>
-    </div>
+        <div class="empty-state">
+            <h3>No documents yet</h3>
+            <p>Create your first collaborative document to get started</p>
+        </div>
+    {% endif %}
+    
+    {% if shared_documents %}
+        <div class="header" style="margin-top: 48px;">
+            <h2>Shared With Me</h2>
+        </div>
+        
+        <div class="document-grid">
+            {% for doc, permission in shared_documents %}
+                <div class="document-card" style="position: relative; border-left: 3px solid #3b82f6;">
+                    <a href="{% url 'editor' doc.id %}" style="text-decoration: none; color: inherit;">
+                        <h3>{{ doc.title }}</h3>
+                        <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px;">
+                            <span class="language-badge">{{ doc.language }}</span>
+                            <span class="language-badge" style="background: {% if permission == 'edit' %}#0e4429{% else %}#1e3a8a{% endif %}; color: {% if permission == 'edit' %}#3fb950{% else %}#60a5fa{% endif %};">
+                                {% if permission == 'edit' %}Can Edit{% else %}View Only{% endif %}
+                            </span>
+                        </div>
+                        <div style="margin-top: 8px;">
+                            <span style="font-size: 12px; color: #8b8b8b;">
+                                Owner: {{ doc.created_by.username }}
+                            </span>
+                        </div>
+                        <div class="meta">
+                            <span>Updated {{ doc.updated_at|timesince }} ago</span>
+                            <span>Created {{ doc.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </a>
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #3c3c3c;">
+                        <a href="{% url 'editor' doc.id %}" class="btn-primary" style="width: 100%; text-align: center; padding: 8px; display: block;">Open</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
 </div>
 {% endblock %}

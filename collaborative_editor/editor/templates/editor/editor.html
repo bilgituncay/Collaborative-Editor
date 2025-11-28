@@ -11,8 +11,19 @@
 
 {% block content %}
 <div class="editor-header">
-    <div class="document-title">{{ document.title }}</div>
+    <div class="document-title">{{ document.title }}
+        {% if not can_edit %}
+        <span style="margin-left: 12px; font-size: 12px; padding: 4px 8px; background: #1e3a8a; color: #60a5fa; border-radius: 12px;">
+            View Only
+        </span>
+        {% endif %}
+    </div>
     <div class="users-container">
+        {% if is_owner %}
+        <a href="{% url 'manage_collaborators' document.id %}" style="color: #3b82f6; text-decoration: none; padding: 4px 8px; background: #1e3a8a; color: #60a5fa; border-radius: 12px;">
+            👥 Manage Collaborators
+        </a>
+        {% endif %}
         <div id="usersList"></div>
         <div class="connection-status" id="connectionStatus">Connecting...</div>
     </div>

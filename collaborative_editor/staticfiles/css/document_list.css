@@ -86,3 +86,164 @@
     margin-bottom: 12px;
     color: #4d4d4d;
 }
+
+.collaborators-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+    
+.search-box {
+    background: #252526;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+    
+.search-input-group {
+    position: relative;
+}
+    
+.search-input {
+    width: 100%;
+    padding: 12px;
+    background: #1e1e1e;
+    border: 1px solid #3c3c3c;
+    border-radius: 6px;
+    color: #d4d4d4;
+    font-size: 14px;
+}
+    
+.search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+    
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #252526;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+    
+.search-results.active {
+    display: block;
+}
+    
+.search-result-item {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #3c3c3c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+    
+.search-result-item:hover {
+    background: #3c3c3c;
+}
+    
+.search-result-item:last-child {
+    border-bottom: none;
+}
+    
+.user-info {
+    flex: 1;
+}
+    
+.user-name {
+    font-weight: 500;
+    color: #d4d4d4;
+}
+    
+.user-email {
+    font-size: 12px;
+    color: #8b8b8b;
+}
+    
+.add-btn {
+    padding: 6px 12px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+    
+.add-btn:hover {
+    background: #2563eb;
+}
+    
+.permission-select {
+    padding: 4px 8px;
+    background: #1e1e1e;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #d4d4d4;
+    font-size: 12px;
+    margin-right: 8px;
+}
+    
+.collaborator-list {
+    background: #252526;
+    border-radius: 8px;
+    padding: 20px;
+}
+    
+.collaborator-item {
+    padding: 16px;
+    border-bottom: 1px solid #3c3c3c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+    
+.collaborator-item:last-child {
+    border-bottom: none;
+}
+    
+.permission-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 8px;
+}
+    
+.permission-badge.view {
+    background: #1e3a8a33;
+    color: #60a5fa;
+}
+    
+.permission-badge.edit {
+    background: #0e442933;
+    color: #3fb950;
+}
+    
+.remove-btn {
+    padding: 6px 12px;
+    background: #5c1c1c;
+    color: #f85149;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+    
+.remove-btn:hover {
+    background: #7c2626;
+}
+    
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #8b8b8b;
+}
